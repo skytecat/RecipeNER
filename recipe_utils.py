@@ -42,7 +42,12 @@ def show_markup(recipe,tags):
             tag   = ttag
             
     span  = (start, end, tag)
-    spans.append(span)        
+    spans.append(span) 
+    colors = BLUE, RED, GREEN, PURPLE, BROWN, ORANGE
+
+    for c in colors:
+        color_name = c.name[0].capitalize() + c.name[1:]
+        c.background = material(color_name, '900')         
             
     show_box_markup(text, spans, palette=PALETTE)
     
