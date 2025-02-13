@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from ipymarkup         import show_box_markup
-from ipymarkup.palette import palette, PALETTE, BLUE, RED, GREEN, PURPLE, BROWN, ORANGE
+from ipymarkup.palette import palette, PALETTE, BLUE, RED, GREEN, PURPLE, BROWN, ORANGE, material
 
 from sklearn.metrics import confusion_matrix
 from sklearn.utils.multiclass import unique_labels
@@ -43,13 +43,13 @@ def show_markup(recipe,tags):
             
     span  = (start, end, tag)
     spans.append(span) 
-    # для отрисовки на темном фоне
     
-    # colors = BLUE, RED, GREEN, PURPLE, BROWN, ORANGE
+    # для отрисовки на темном фоне
+    colors = BLUE, RED, GREEN, PURPLE, BROWN, ORANGE
 
-    # for c in colors:
-    #     color_name = c.name[0].capitalize() + c.name[1:]
-    #     c.background = material(color_name, '900')         
+    for c in colors:
+        color_name = c.name[0].capitalize() + c.name[1:]
+        c.background = material(color_name, '900')         
             
     show_box_markup(text, spans, palette=PALETTE)
     
@@ -204,20 +204,20 @@ def prepare_data(lines):
 
 class Converter():
     def __init__(self,vocabulary, tags):
-        self.idx_to_word = sorted(vocabulary)
-        self.idx_to_tag  = sorted(tags)
+        self.words = sorted(vocabulary)
+        self.tags  = sorted(tags)
 
-        self.word_to_idx = {word:idx for idx,word in enumerate(self.idx_to_word)}
-        self.tag_to_idx  = { tag:idx for idx,tag  in enumerate(self.idx_to_tag)}
+        self.word_with_idx = { word:idx for idx,word in enumerate(self.words)}
+        self.tag_with_idx  = { tag:idx for idx,tag  in enumerate(self.tags)}
         
     def words_to_index(self, words):
-        return torch.tensor([self.word_to_idx[w] for w in words], dtype=torch.long)
+        return torch.tensor([self.word_with_idx[w] for w in words], dtype=torch.long)
     
     def tags_to_index(self, words):
-        return torch.tensor([self.tag_to_idx[w] for w in words], dtype=torch.long)
+        return torch.tensor([self.tag_with_idx[w] for w in words], dtype=torch.long)
     
     def indices_to_words(self, indices):
-        return [self.idx_to_word[i] for i in indices]
+        return [self.words[i] for i in indices]
     
     def indices_to_tags(self, indices):
-        return [self.idx_to_tag[i] for i in indices]
+        return [self.tags[i] for i in indices]
