@@ -92,20 +92,28 @@ def tag_statistics(model, converter, data):
     return total_correct, total_tags
 
 
-def plot_confusion_matrix(y_true, y_pred, classes, normalize=False):
-    if normalize:
-        cm = confusion_matrix(y_true, y_pred, labels=classes, normalize='true')
+def plot_confusion_matrix(y_true, y_pred, classes):
+    # Создаем два подграфика (1 строка, 2 столбца)
+    plt.figure(figsize=(16, 6))
+
+    plt.subplot(1, 2, 1)  # 1 строка, 2 столбца, 1-й график
+    cm = confusion_matrix(y_true, y_pred, labels=classes)
         
-        sns.heatmap(cm, annot=True, xticklabels=classes, yticklabels=classes, fmt='.2f')
-        plt.title('Normalized Confusion Matrix')
-    else:
-        cm = confusion_matrix(y_true, y_pred, labels=classes)
-        
-        sns.heatmap(cm, annot=True, fmt='d', xticklabels=classes, yticklabels=classes)
-        plt.title('Confusion Matrix')
-        
+    sns.heatmap(cm, annot=True, fmt='d', xticklabels=classes, yticklabels=classes)
+    plt.title('Confusion Matrix')
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+
+    plt.subplot(1, 2, 2)  # 1 строка, 2 столбца, 2-й график
+    cm = confusion_matrix(y_true, y_pred, labels=classes, normalize='true')
+    
+    sns.heatmap(cm, annot=True, xticklabels=classes, yticklabels=classes, fmt='.2f')
+    plt.title('Normalized Confusion Matrix')
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
+    # Отображаем оба графика
+    plt.tight_layout() 
     plt.show()
 
 
