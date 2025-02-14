@@ -96,7 +96,7 @@ def plot_confusion_matrix(y_true, y_pred, classes, normalize=False):
     if normalize:
         cm = confusion_matrix(y_true, y_pred, labels=classes, normalize='true')
         
-        sns.heatmap(cm, annot=True, xticklabels=classes, yticklabels=classes)
+        sns.heatmap(cm, annot=True, xticklabels=classes, yticklabels=classes, fmt='.2f')
         plt.title('Normalized Confusion Matrix')
     else:
         cm = confusion_matrix(y_true, y_pred, labels=classes)
