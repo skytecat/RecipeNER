@@ -76,27 +76,20 @@ def tag_statistics(model, converter, data):
         for tag_p, tag_g in zip(predicted, ground):
             if tag_p == tag_g:
                 correct_tags[tag_g] += 1
-            else:
-                error = True  
-                print(tag_g, tag_p)      
-        return correct_tags, ground_tags, error
+  
+        return correct_tags, ground_tags
     
     
     total_correct, total_tags = Counter(), Counter()
-    i = 0
-    wrong_recipes = []
     
     for recipe, tags in data:
         tags_pred              = predict_tags(model, converter, recipe)
-        tags_correct, tags_num, error = tag_counter(tags_pred, tags)
-        if error:
-            wrong_recipes.append(i)
-
+        tags_correct, tags_num = tag_counter(tags_pred, tags)
+       
         total_correct.update(tags_correct)
         total_tags.update(tags_num)
-        i += 1
 
-    return total_correct, total_tags, wrong_recipes
+    return total_correct, total_tags
 
 
 def plot_confusion_matrix(y_true, y_pred, classes, normalize=False):
