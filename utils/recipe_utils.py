@@ -1,13 +1,11 @@
-import numpy as np
 import matplotlib.pyplot as plt
 
 import seaborn as sns
 
 from ipymarkup         import show_box_markup
-from ipymarkup.palette import palette, PALETTE, BLUE, RED, GREEN, PURPLE, BROWN, ORANGE, material
+from ipymarkup.palette import PALETTE, BLUE, RED, GREEN, PURPLE, BROWN, ORANGE, material
 
 from sklearn.metrics import confusion_matrix
-from sklearn.utils.multiclass import unique_labels
 
 import torch
 from collections import Counter
@@ -33,14 +31,14 @@ def show_markup(recipe,tags):
     for word, ttag in zip(recipe[1:], tags[1:]): 
         
         if tag == ttag:
-            end  += 1+len(word)
+            end  += 1 + len(word)
             
         else:
             span  = (start, end, tag)
             spans.append(span)
         
-            start = 1+end
-            end  += 1+len(word)
+            start = 1 + end
+            end  += 1 + len(word)
             tag   = ttag
             
     span  = (start, end, tag)
@@ -71,7 +69,6 @@ def tag_statistics(model, converter, data):
     def tag_counter(predicted, ground):
         correct_tags = Counter()
         ground_tags  = Counter(ground)
-        error = False
         
         for tag_p, tag_g in zip(predicted, ground):
             if tag_p == tag_g:
