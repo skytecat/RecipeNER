@@ -90,18 +90,17 @@ def tag_statistics(model, converter, data):
 
 
 def plot_confusion_matrix(y_true, y_pred, classes):
-    # Создаем два подграфика (1 строка, 2 столбца)
     plt.figure(figsize=(16, 6))
 
-    plt.subplot(1, 2, 1)  # 1 строка, 2 столбца, 1-й график
     cm = confusion_matrix(y_true, y_pred, labels=classes)
         
     sns.heatmap(cm, annot=True, fmt='d', xticklabels=classes, yticklabels=classes)
     plt.title('Confusion Matrix')
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+    # plt.show()
 
-    plt.subplot(1, 2, 2)  # 1 строка, 2 столбца, 2-й график
+    plt.figure(figsize=(16, 6))
     cm = confusion_matrix(y_true, y_pred, labels=classes, normalize='true')
     
     sns.heatmap(cm, annot=True, xticklabels=classes, yticklabels=classes, fmt='.2f')
@@ -109,8 +108,6 @@ def plot_confusion_matrix(y_true, y_pred, classes):
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
 
-    # Отображаем оба графика
-    plt.tight_layout() 
     plt.show()
 
 
