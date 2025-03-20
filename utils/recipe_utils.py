@@ -63,30 +63,60 @@ def predict_tags(model, converter, recipe):
     decoded_tags   = converter.indices_to_tags(encoded_tags) # номер тэга -> тэг
     
     return decoded_tags
-    
-    
+
+
 def tag_statistics(model, converter, data):
     def tag_counter(predicted, ground):
         correct_tags = Counter()
         ground_tags  = Counter(ground)
+        predicted_tags = Counter(predicted)  # Считаем предсказанные теги
         
         for tag_p, tag_g in zip(predicted, ground):
             if tag_p == tag_g:
                 correct_tags[tag_g] += 1
   
-        return correct_tags, ground_tags
+        return correct_tags, ground_tags, predicted_tags
     
-    
-    total_correct, total_tags = Counter(), Counter()
+    total_correct, total_tags, total_predicted = Counter(), Counter(), Counter()
     
     for recipe, tags in data:
-        tags_pred              = predict_tags(model, converter, recipe)
-        tags_correct, tags_num = tag_counter(tags_pred, tags)
+        tags_pred = predict_tags(model, converter, recipe)
+        tags_correct, tags_num, tags_predicted = tag_counter(tags_pred, tags)
        
         total_correct.update(tags_correct)
         total_tags.update(tags_num)
+        total_predicted.update(tags_predicted)  # Обновляем общее количество предсказанных тегов
 
-    return total_correct, total_tags
+    return total_correct, total_tags, total_predicted
+
+
+def calculate_micro_macro_avg(total_correct, total_tags, total_predicted):
+    # Вычисляем precision и recall для каждого класса
+    precision_per_class = {}
+    recall_per_class = {}
+    
+    for tag in total_tags:
+        precision_per_class[tag] = total_correct[tag] / total_predicted[tag] if total_predicted[tag] > 0 else 0
+        recall_per_class[tag] = total_correct[tag] / total_tags[tag] if total_tags[tag] > 0 else 0
+    
+    # Macro-average
+    macro_precision = sum(precision_per_class.values()) / len(precision_per_class)
+    macro_recall = sum(recall_per_class.values()) / len(recall_per_class)
+    
+    # Micro-average
+    total_tp = sum(total_correct.values())  # Общее количество True Positives
+    total_fp = sum(total_predicted[tag] - total_correct[tag] for tag in total_predicted)  # Общее количество False Positives
+    total_fn = sum(total_tags[tag] - total_correct[tag] for tag in total_tags)  # Общее количество False Negatives
+    
+    micro_precision = total_tp / (total_tp + total_fp) if (total_tp + total_fp) > 0 else 0
+    micro_recall = total_tp / (total_tp + total_fn) if (total_tp + total_fn) > 0 else 0
+    
+    return {
+        "macro_precision": macro_precision,
+        "macro_recall": macro_recall,
+        "micro_precision": micro_precision,
+        "micro_recall": micro_recall,
+    }
 
 
 def plot_confusion_matrix(y_true, y_pred, classes):
@@ -98,7 +128,6 @@ def plot_confusion_matrix(y_true, y_pred, classes):
     plt.title('Confusion Matrix')
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-    # plt.show()
 
     plt.figure(figsize=(16, 6))
     cm = confusion_matrix(y_true, y_pred, labels=classes, normalize='true')
